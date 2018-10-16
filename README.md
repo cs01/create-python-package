@@ -1,29 +1,17 @@
 # create-python-package
-Initialize a new package using best practices as described by the [Python Packaging Authority (PyPA)](https://packaging.python.org/tutorials/packaging-projects/).
+Initialize a new package using best practices as described by the [Python Packaging Authority (PyPA)](https://packaging.python.org/tutorials/packaging-projects/). Perfect for beginners and experts alike. No more guesswork!
 
-Perfect for beginners and experts alike!
 
+## Quick Overview
 ```
-> create-python-package mypackage
-```
-
-No more guesswork!
-
-The file structure you're left with looks like this
-```
-mypackage/
-├── LICENSE
-├── README.md
-├── activate-venv -> /private/tmp/mypackage/venv/bin/activate
-├── mypackage
-│   ├── __init__.py
-│   └── main.py
-└── setup.py
+create-python-package mypackage
+cd mypackage
+source activate-venv
 ```
 
-To publish, run
+And to publish, run
 ```
-> publish-python-package packagepath
+publish-python-package mypackage
 ```
 
 ## Virtualenv ready to go!
@@ -38,23 +26,63 @@ deactivate
 
 To learn more about virtual environments, see [Creating Virtual Environments](https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments).
 
-## Install
-Install [pipx](https://github.com/cs01/pipx), then use `pipx` to install `create-python-package`.
-```
-> pipx install create-python-package
-```
+## Usage and Installation
+*[pipx](https://github.com/cs01/pipx) allows you to run or install Python binaries from packages*
 
-You can also run the latest version of `create-python-package` with
+To run the latest version
+
 ```
-> pipx create-python-package mypackage  # runs latest version
+> pipx create-python-package mypackage  # directly runs latest version
 ```
 
 and to publish
 ```
-> pipx --package create-python-package publish-python-package mypackage  # runs latest version
+> pipx --package create-python-package publish-python-package mypackage  # directly runs latest version
 ```
+
+To install to your system and freeze the version
+```
+> pipx install create-python-package
+```
+
 
 Requires Python 3.6+.
 
+## Example Session
+```
+> create-python-package /tmp/fake
+Creating a new Python package in /private/tmp/fake
+
+Creating a virtual environment at /private/tmp/fake/venv
+Upgrading pip in the virtual environment.
+
+Initialized a git repository.
+
+Success! Created fake at /private/tmp/fake
+Inside that directory, you can run several commands
+
+  source activate-venv
+     Activates this package's isolated Python environment
+
+  pip install PACKAGE
+    Installs a package to current environment
+
+  pip install -e .
+    Installs this package in editable mode to the current environment
+
+We suggest that you being by typing:
+
+  cd fake
+  source activate-venv fake
+
+To deactivate the virtual environment, type `deactivate`.
+
+Questions? Create an issue at https://github.com/cs01/create-python-package
+
+Happy hacking!
+```
+
 ## Credits
+Created and published using `create-python-package` 😄
+
 Inspired by [create-react-app](https://github.com/facebook/create-react-app)

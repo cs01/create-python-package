@@ -1,27 +1,41 @@
 #!/usr/bin/env python
 
 import argparse
-from pathlib import Path
 import logging
+import os
+from pathlib import Path
 import shutil
 import subprocess
-from create_python_package import templates
+import sys
+from createpythonpackage import templates
 
 TEST_PYPI_URL = "https://test.pypi.org/simple/"
+ISATTY = sys.stdout.isatty()
+WINDOWS = os.name == "nt"
+
+
+def blue(text):
+    if ISATTY and not WINDOWS:
+        return "\033[1;34m" + text + "\033[0m"
+    return text
+
+
+def printblue(text):
+    print(blue(text))
 
 
 def print_version():
-    print("0.0.0.3")
+    print("0.0.0.4")
 
 
 class CppError(Exception):
     pass
 
 
-def _run(cmd, check=True):
+def _run(cmd, check=True, **kwargs):
     cmd_str = " ".join(str(c) for c in cmd)
     logging.info(f"running {cmd_str}")
-    returncode = subprocess.run(cmd).returncode
+    returncode = subprocess.run(cmd, **kwargs).returncode
     if check and returncode:
         raise CppError(f"{cmd_str!r} failed with returncode {str(returncode)}")
     return returncode
@@ -34,13 +48,24 @@ class Package:
         self.add_files()
         self.create_venv()
         self.symlink_venv()
+        self.git_init()
+
+    def git_init(self):
+        _run(["git", "init", self.path], stdout=subprocess.DEVNULL)
+        print("Initialized a git repository.")
+        print()
 
     def create_venv(self):
-        _run(["python3", "-m", "venv", self.path / "venv", "--prompt", self.name])
+        venv = self.path / "venv"
+        print(f"Creating a virtual environment at {blue(str(venv))}")
+        _run(["python3", "-m", "venv", venv, "--prompt", self.name])
         _run([self.path / "venv/bin/pip", "install", "--upgrade", "--quiet", "pip"])
+        print(f"Upgrading {blue('pip')} in the virtual environment.")
+        print()
 
     def symlink_venv(self):
-        (self.path / "activate-venv").symlink_to(self.path / "venv/bin/activate")
+        relative_path = (self.path / "venv/bin/activate").relative_to(self.path)
+        (self.path / "activate-venv").symlink_to(relative_path)
 
     def add_files(self):
         (self.path / self.name).mkdir(exist_ok=True)
@@ -62,14 +87,29 @@ class Package:
             f.write(templates.licence)
 
     def print_success(self):
-        print(f"Created package in {self.path}.")
+        print(f"Success! Created {self.name} at {str(self.path)}")
+        print("Inside that directory, you can run several commands")
+        print()
+        printblue("  source activate-venv")
+        print("     Activates this package's isolated Python environment")
+        print()
+        printblue("  pip install PACKAGE")
+        print("    Installs a package to current environment")
+        print()
+        printblue("  pip install -e .")
+        print("    Installs this package in editable mode to the current environment")
+        print()
         print(
-            f"To activate package's virtualenv, cd to {self.path} "
-            "then run `source activate-venv`. To deactivate, type `deactivate`."
+            f"We suggest that you being by typing:\n\n"
+            f"  {blue('cd')} {self.name}\n"
+            f"  {blue('source activate-venv')} {self.name}\n\n"
+            "To deactivate the virtual environment, type `deactivate`.\n"
         )
         print(
             "Questions? Create an issue at https://github.com/cs01/create-python-package"
         )
+        print()
+        print("Happy hacking!")
 
 
 def mkdir(path):
@@ -84,6 +124,8 @@ def _create(args):
     path = Path(args.name).resolve()
     if Path(args.name).exists() and len(list(path.iterdir())):
         raise CppError(f"{str(path)} already exists and is not empty")
+    print(f"Creating a new Python package in {blue(str(path))}")
+    print()
     mkdir(path)
     return Package(path, name)
 
@@ -122,16 +164,32 @@ def create():
 
 
 def _publish(path, test):
+    if (path / "dist").exists() and list((path / "dist").iterdir()):
+        raise CppError(f"Remove {str(path/'dist')} before publishing")
     print(
         "running instructions from https://packaging.python.org/tutorials/packaging-projects/"
     )
-    _run(["pip", "install", "--upgrade", "setuptools", "wheel", "twine"])
-    _run(["python", path / "setup.py", "sdist", "bdist_wheel"])
-    upload_cmd = ["python", "-m", "twine", "upload"]
+    print(f"Upgrading {blue('setuptools')}, {blue('wheel')}, and {blue('twine')}")
+    cmd = ["pip", "install", "--upgrade", "--quiet", "setuptools", "wheel", "twine"]
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
+
+
+    cmd = ["python", path / "setup.py", "--quiet", "sdist", "bdist_wheel"]
+    printblue("Building package")
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
+
+    cmd = ["python", "-m", "twine", "upload"]
     if test:
-        upload_cmd += ["--repository-url", TEST_PYPI_URL]
-    upload_cmd += ["dist/*"]
-    _run(upload_cmd)
+        cmd += ["--repository-url", TEST_PYPI_URL]
+    cmd += ["dist/*"]
+    printblue("Uploading package")
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
 
 
 def publish():
