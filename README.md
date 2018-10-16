@@ -1,3 +1,5 @@
+<a href="https://github.com/ambv/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+
 # create-python-package
 Initialize a new package using best practices as described by the [Python Packaging Authority (PyPA)](https://packaging.python.org/tutorials/packaging-projects/). Perfect for beginners and experts alike. No more guesswork!
 
@@ -27,7 +29,7 @@ deactivate
 To learn more about virtual environments, see [Creating Virtual Environments](https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments).
 
 ## Usage and Installation
-*[pipx](https://github.com/cs01/pipx) allows you to run or install Python binaries from packages*
+*[pipx](https://github.com/cs01/pipx) is a new package that allows you to run or install Python binaries from packages*
 
 To run the latest version
 
@@ -47,6 +49,14 @@ If you would rather install to your system and freeze the version
 To upgrade the installation
 ```
 > pipx upgrade create-python-package
+```
+
+If you do not wish to use pipx, you can install as follows.
+```
+python3 -m venv cpp  # create a virtual environment
+source cpp/bin/activate  # activate the virtual environment
+pip install -U pip  # upgrade pip
+pip install create-python-package
 ```
 
 
