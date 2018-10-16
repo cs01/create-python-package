@@ -40,9 +40,13 @@ and to publish
 > pipx --package create-python-package publish-python-package mypackage  # directly runs latest version
 ```
 
-To install to your system and freeze the version
+If you would rather install to your system and freeze the version
 ```
 > pipx install create-python-package
+```
+To upgrade the installation
+```
+> pipx upgrade create-python-package
 ```
 
 
