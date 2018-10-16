@@ -15,7 +15,7 @@ with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
 
 setup(
     name="create-python-package",
-    version="0.0.0.4",
+    version="0.0.0.5",
     author="Chad Smith",
     author_email="grassfedcode@gmail.com",
     description="Create the file and folder structure for a Python package",

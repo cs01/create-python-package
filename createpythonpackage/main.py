@@ -25,7 +25,7 @@ def printblue(text):
 
 
 def print_version():
-    print("0.0.0.4")
+    print("0.0.0.5")
 
 
 class CppError(Exception):
@@ -102,7 +102,7 @@ class Package:
         print(
             f"We suggest that you being by typing:\n\n"
             f"  {blue('cd')} {self.name}\n"
-            f"  {blue('source activate-venv')} {self.name}\n\n"
+            f"  {blue('source activate-venv')}\n\n"
             "To deactivate the virtual environment, type `deactivate`.\n"
         )
         print(

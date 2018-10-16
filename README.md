@@ -77,7 +77,7 @@ Inside that directory, you can run several commands
 We suggest that you being by typing:
 
   cd fake
-  source activate-venv fake
+  source activate-venv
 
 To deactivate the virtual environment, type `deactivate`.
 
