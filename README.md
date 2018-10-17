@@ -3,6 +3,7 @@
 # create-python-package
 Initialize a new package using best practices as described by the [Python Packaging Authority (PyPA)](https://packaging.python.org/tutorials/packaging-projects/). Perfect for beginners and experts alike. No more guesswork!
 
+Read more on the [blog post](https://medium.com/@grassfedcode/bringing-some-of-javascripts-packaging-solutions-to-python-1b02430d589e).
 
 ## Quick Overview
 ```
