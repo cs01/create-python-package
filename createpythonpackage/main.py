@@ -24,7 +24,7 @@ def printblue(text):
 
 
 def print_version():
-    print("0.0.0.5")
+    print("0.0.0.6")
 
 
 class CppError(Exception):
@@ -40,31 +40,43 @@ def _run(cmd, check=True, **kwargs):
     return returncode
 
 
+def _create_venv(path: Path, name: str, python: str = sys.executable):
+    venv = path / "venv"
+    if venv.exists() and len(list(venv.iterdir())):
+        raise CppError(
+            f"Directory {str(venv)!r} already exists. Remove then try again."
+        )
+    print(f"Creating a virtual environment at {blue(str(venv))}")
+    if _run([python, "-m", "venv", venv, "--prompt", name]):
+        raise CppError("Could not create virtual environment")
+    print(f"Upgrading {blue('pip')} in the virtual environment.")
+    if _run([path / "venv/bin/pip", "install", "--upgrade", "--quiet", "pip"]):
+        logging.warning("Could not upgrade pip to latest verions")
+    print()
+    return venv
+
+
+def symlink_venv(path: Path):
+    relative_path = (path / "venv/bin/activate").relative_to(path)
+    try:
+        (path / "activate").symlink_to(relative_path)
+    except FileExistsError:
+        logging.warning(f"File already exists at {str(relative_path)!r}")
+
+
 class Package:
     def __init__(self, path, name):
         self.path = path
         self.name = name
         self.add_files()
-        self.create_venv()
-        self.symlink_venv()
+        _create_venv(self.path, self.name)
+        symlink_venv(self.path)
         self.git_init()
 
     def git_init(self):
         _run(["git", "init", self.path], stdout=subprocess.DEVNULL)
         print("Initialized a git repository.")
         print()
-
-    def create_venv(self):
-        venv = self.path / "venv"
-        print(f"Creating a virtual environment at {blue(str(venv))}")
-        _run(["python3", "-m", "venv", venv, "--prompt", self.name])
-        _run([self.path / "venv/bin/pip", "install", "--upgrade", "--quiet", "pip"])
-        print(f"Upgrading {blue('pip')} in the virtual environment.")
-        print()
-
-    def symlink_venv(self):
-        relative_path = (self.path / "venv/bin/activate").relative_to(self.path)
-        (self.path / "activate-venv").symlink_to(relative_path)
 
     def add_files(self):
         (self.path / self.name).mkdir(exist_ok=True)
@@ -159,6 +171,7 @@ def _build_package(path):
     print(f"  {' '.join(list(str(c) for c in cmd))}")
     print()
     _run(cmd)
+    printblue("Package has been built! See output in 'dist' directory.")
 
 
 def _publish(path, test):
@@ -217,8 +230,55 @@ def build_package():
         exit(e)
 
 
+def create_venv():
+    parser = argparse.ArgumentParser(
+        description="create a virtual environment for the given directory"
+    )
+    parser.add_argument(
+        "path",
+        default=".",
+        help="Path where venv should be created (usually the root of a package next to setup.py)",
+    )
+    parser.add_argument(
+        "--python",
+        default=sys.executable,
+        help="Python binary this venv should be associated with",
+    )
+    parser.add_argument("--verbose", action="store_true")
+
+    args = parser.parse_args()
+    _setup_logging(args.verbose)
+    try:
+        path = Path(args.path).resolve()
+        mkdir(path)
+        venv = _create_venv(path, path.name, args.python)
+        symlink_venv(path)
+        if (path / "requirements.txt").exists():
+            logging.info("Installing from requirements.txt file")
+            _run(
+                [
+                    venv / "bin" / "python",
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    path / "requirements.txt",
+                ]
+            )
+        printblue("A new virtual environment has been created!")
+        print()
+        print(
+            f"Run cd {str(path)!r} then type `source activate` "
+            "to activate it. When you are finished type `deactivate` to exit the environment."
+        )
+    except CppError as e:
+        exit(e)
+
+
 def publish():
-    parser = argparse.ArgumentParser(description="builds an publishes a package to PyPI")
+    parser = argparse.ArgumentParser(
+        description="builds an publishes a package to PyPI"
+    )
     parser.add_argument(
         "path",
         nargs="?",

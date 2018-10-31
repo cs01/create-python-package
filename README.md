@@ -5,22 +5,43 @@ Initialize a new package using best practices as described by the [Python Packag
 
 Read more on the [blog post](https://medium.com/@grassfedcode/bringing-some-of-javascripts-packaging-solutions-to-python-1b02430d589e).
 
-## Quick Overview
+## Overview
+This package ships with four CLI entrypoints:
+```
+- build-python-package
+- create-python-package
+- create-venv
+- publish-python-package
+```
+
+To use create-python-package:
 ```
 create-python-package mypackage
 cd mypackage
-source activate-venv
+source activate
 ```
 
-And to publish, run
+To publish (which automatically builds first), run
 ```
-publish-python-package mypackage
+publish-python-package path_to_package
 ```
+
+To build without publishing
+```
+build-python-package path_to_package
+````
+
+To create a virtual environment
+```
+create-venv path  # creates venv at path/venv and symlink to activate at path/activate
+# then run `source activate` to activate the virtual environment
+````
+
 
 ## Virtualenv ready to go!
 Inside the directory you can run
 ```
-source activate-venv
+source activate
 ```
 to activate an isolated Python environment that was created specifically for that package. To deactivate it, type
 ```
@@ -29,28 +50,22 @@ deactivate
 
 To learn more about virtual environments, see [Creating Virtual Environments](https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments).
 
-## Usage and Installation
+## Installation
 *[pipx](https://github.com/cs01/pipx) is a new package that allows you to run or install Python binaries from packages*
 
-To run the latest version
-
 ```
-> pipx create-python-package mypackage  # directly runs latest version
+pipx install create-python-package
 ```
 
-and to publish
-```
-> pipx --package create-python-package publish-python-package mypackage  # directly runs latest version
-```
 
-If you would rather install to your system and freeze the version
-```
-> pipx install create-python-package
-```
-To upgrade the installation
-```
-> pipx upgrade create-python-package
-```
+>pipx install create-python-package
+  installed package create-python-package, 0.0.0.5
+  These binaries are now globally available
+    - build-python-package
+    - create-python-package
+    - create-venv
+    - publish-python-package
+done! ✨ 🌟 ✨
 
 If you do not wish to use pipx, you can install as follows.
 ```
@@ -76,7 +91,7 @@ Initialized a git repository.
 Success! Created fake at /private/tmp/fake
 Inside that directory, you can run several commands
 
-  source activate-venv
+  source activate
      Activates this package's isolated Python environment
 
   pip install PACKAGE
@@ -88,7 +103,7 @@ Inside that directory, you can run several commands
 We suggest that you being by typing:
 
   cd fake
-  source activate-venv
+  source activate
 
 To deactivate the virtual environment, type `deactivate`.
 

@@ -15,7 +15,7 @@ with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
 
 setup(
     name="create-python-package",
-    version="0.0.0.5",
+    version="0.0.0.6",
     author="Chad Smith",
     author_email="grassfedcode@gmail.com",
     description="Create the file and folder structure for a Python package",
@@ -32,6 +32,7 @@ setup(
             "create-python-package = createpythonpackage.main:create_package",
             "build-python-package = createpythonpackage.main:build_package",
             "publish-python-package = createpythonpackage.main:publish",
+            "create-venv = createpythonpackage.main:create_venv",
         ]
     },
     extras_require={},
