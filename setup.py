@@ -29,7 +29,8 @@ setup(
     scripts=[],
     entry_points={
         "console_scripts": [
-            "create-python-package = createpythonpackage.main:create",
+            "create-python-package = createpythonpackage.main:create_package",
+            "build-python-package = createpythonpackage.main:build_package",
             "publish-python-package = createpythonpackage.main:publish",
         ]
     },

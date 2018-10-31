@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 import logging
 import os
 from pathlib import Path
-import shutil
 import subprocess
 import sys
 from createpythonpackage import templates
@@ -119,7 +118,7 @@ def mkdir(path):
     path.mkdir(parents=True, exist_ok=True)
 
 
-def _create(args):
+def _create_package(args):
     name = Path(args.name).name
     path = Path(args.name).resolve()
     if Path(args.name).exists() and len(list(path.iterdir())):
@@ -140,7 +139,40 @@ def _setup_logging(verbose):
         logging.basicConfig(level=logging.WARNING, format="%(message)s")
 
 
-def create():
+def _build_package(path):
+    if (path / "dist").exists() and list((path / "dist").iterdir()):
+        raise CppError(
+            f"Remove {str(path/'dist')!r} directory before building "
+            "to ensure a clean build"
+        )
+    print(
+        "running instructions from https://packaging.python.org/tutorials/packaging-projects/"
+    )
+    print(f"Upgrading {blue('setuptools')}, {blue('wheel')}, and {blue('twine')}")
+    cmd = ["pip", "install", "--upgrade", "--quiet", "setuptools", "wheel", "twine"]
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
+
+    cmd = ["python", path / "setup.py", "--quiet", "sdist", "bdist_wheel"]
+    printblue("Building package")
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
+
+
+def _publish(path, test):
+    cmd = ["python", "-m", "twine", "upload"]
+    if test:
+        cmd += ["--repository-url", TEST_PYPI_URL]
+    cmd += ["dist/*"]
+    printblue("Uploading package")
+    print(f"  {' '.join(list(str(c) for c in cmd))}")
+    print()
+    _run(cmd)
+
+
+def create_package():
     parser = argparse.ArgumentParser()
     parser.add_argument("name", nargs="?", help="Name of package to create")
     parser.add_argument("--verbose", action="store_true")
@@ -156,44 +188,37 @@ def create():
     _setup_logging(args.verbose)
 
     try:
-        package = _create(args)
+        package = _create_package(args)
         package.print_success()
         exit(0)
     except CppError as e:
         exit(e)
 
 
-def _publish(path, test):
-    if (path / "dist").exists() and list((path / "dist").iterdir()):
-        raise CppError(f"Remove {str(path/'dist')} before publishing")
-    print(
-        "running instructions from https://packaging.python.org/tutorials/packaging-projects/"
+def build_package():
+    parser = argparse.ArgumentParser(
+        description="build a package but do not publish it"
     )
-    print(f"Upgrading {blue('setuptools')}, {blue('wheel')}, and {blue('twine')}")
-    cmd = ["pip", "install", "--upgrade", "--quiet", "setuptools", "wheel", "twine"]
-    print(f"  {' '.join(list(str(c) for c in cmd))}")
-    print()
-    _run(cmd)
+    parser.add_argument(
+        "path", help="Path to root of package (setup.py should be in this dir)"
+    )
+    parser.add_argument("--verbose", action="store_true")
 
-
-    cmd = ["python", path / "setup.py", "--quiet", "sdist", "bdist_wheel"]
-    printblue("Building package")
-    print(f"  {' '.join(list(str(c) for c in cmd))}")
-    print()
-    _run(cmd)
-
-    cmd = ["python", "-m", "twine", "upload"]
-    if test:
-        cmd += ["--repository-url", TEST_PYPI_URL]
-    cmd += ["dist/*"]
-    printblue("Uploading package")
-    print(f"  {' '.join(list(str(c) for c in cmd))}")
-    print()
-    _run(cmd)
+    args = parser.parse_args()
+    _setup_logging(args.verbose)
+    try:
+        path = Path(args.path).resolve()
+        if not path.is_dir():
+            exit(f"Directory {args.path} does not exist")
+        elif not (path / "setup.py").is_file():
+            exit(f"{str(path / 'setup.py')} does not exist")
+        _build_package(Path(args.path))
+    except CppError as e:
+        exit(e)
 
 
 def publish():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="builds an publishes a package to PyPI")
     parser.add_argument(
         "path",
         nargs="?",
@@ -223,11 +248,11 @@ def publish():
             exit(f"Directory {args.path} does not exist")
         elif not (path / "setup.py").is_file():
             exit(f"{str(path / 'setup.py')} does not exist")
+        _build_package(path)
         _publish(path, args.test)
-        exit(0)
     except CppError as e:
         exit(e)
 
 
 if __name__ == "__main__":
-    create()
+    create_package()
