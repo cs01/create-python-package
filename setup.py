@@ -4,18 +4,36 @@
 import io
 import os
 import sys
-from setuptools import find_packages, setup, Command
+
+if sys.version_info < (3, 6, 0):
+    print("Python 3.6+ is required")
+    exit(1)
+from setuptools import find_packages, setup  # noqa E402
+from pathlib import Path  # noqa E402
+from typing import List  # noqa E402
+import ast  # noqa E402
+import re  # noqa E402
 
 DEPENDENCIES = []
-CURDIR = os.path.abspath(os.path.dirname(__file__))
+CURDIR = Path(__file__).parent
 EXCLUDE_FROM_PACKAGES = ["contrib", "docs", "tests*"]
 
 with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
     README = f.read()
 
+
+def get_version() -> str:
+    main_file = CURDIR / "createpythonpackage" / "main.py"
+    _version_re = re.compile(r"__version__\s+=\s+(?P<version>.*)")
+    with open(main_file, "r", encoding="utf8") as f:
+        match = _version_re.search(f.read())
+        version = match.group("version") if match is not None else '"unknown"'
+    return str(ast.literal_eval(version))
+
+
 setup(
     name="create-python-package",
-    version="0.0.0.6",
+    version=get_version(),
     author="Chad Smith",
     author_email="grassfedcode@gmail.com",
     description="Create the file and folder structure for a Python package",

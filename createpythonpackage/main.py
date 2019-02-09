@@ -12,6 +12,8 @@ TEST_PYPI_URL = "https://test.pypi.org/simple/"
 ISATTY = sys.stdout.isatty()
 WINDOWS = os.name == "nt"
 
+__version__ = "0.1.0.0"
+
 
 def blue(text):
     if ISATTY and not WINDOWS:
@@ -24,7 +26,7 @@ def printblue(text):
 
 
 def print_version():
-    print("0.0.0.6")
+    print(__version__)
 
 
 class CppError(Exception):
@@ -56,21 +58,15 @@ def _create_venv(path: Path, name: str, python: str = sys.executable):
     return venv
 
 
-def symlink_venv(path: Path):
-    relative_path = (path / "venv/bin/activate").relative_to(path)
-    try:
-        (path / "activate").symlink_to(relative_path)
-    except FileExistsError:
-        logging.warning(f"File already exists at {str(relative_path)!r}")
-
-
 class Package:
-    def __init__(self, path, name):
+    def __init__(self, path, name, author, version, email):
         self.path = path
         self.name = name
+        self.author = author
+        self.version = version
+        self.email = email
         self.add_files()
         _create_venv(self.path, self.name)
-        symlink_venv(self.path)
         self.git_init()
 
     def git_init(self):
@@ -83,13 +79,17 @@ class Package:
         (self.path / self.name / "__init__.py").touch()
 
         with open(self.path / "README.md", "w") as f:
-            f.write(templates.readme % self.name)
+            f.write(templates.readme.format(name=self.name, author=self.author))
 
         with open(self.path / "setup.py", "w") as f:
-            f.write(templates.setup % self.name)
+            f.write(
+                templates.setup.format(
+                    name=self.name, author=self.author, email=self.email
+                )
+            )
 
         with open(self.path / self.name / "main.py", "w") as f:
-            f.write(templates.main)
+            f.write(templates.main.format(version=self.version))
 
         with open(self.path / ".gitignore", "w") as f:
             f.write(templates.gitignore)
@@ -97,11 +97,14 @@ class Package:
         with open(self.path / "LICENSE", "w") as f:
             f.write(templates.licence)
 
+        with open(self.path / "makefile", "w") as f:
+            f.write(templates.makefile)
+
     def print_success(self):
         print(f"Success! Created {self.name} at {str(self.path)}")
         print("Inside that directory, you can run several commands")
         print()
-        printblue("  source activate-venv")
+        printblue("  source ven/bin/activate")
         print("     Activates this package's isolated Python environment")
         print()
         printblue("  pip install PACKAGE")
@@ -113,7 +116,7 @@ class Package:
         print(
             f"We suggest that you being by typing:\n\n"
             f"  {blue('cd')} {self.name}\n"
-            f"  {blue('source activate-venv')}\n\n"
+            f"  {blue('source ven/bin/activate')}\n\n"
             "To deactivate the virtual environment, type `deactivate`.\n"
         )
         print(
@@ -131,6 +134,8 @@ def mkdir(path):
 
 
 def _create_package(args):
+    author = args.author
+    version = args.packageversion
     name = Path(args.name).name
     path = Path(args.name).resolve()
     if Path(args.name).exists() and len(list(path.iterdir())):
@@ -138,7 +143,7 @@ def _create_package(args):
     print(f"Creating a new Python package in {blue(str(path))}")
     print()
     mkdir(path)
-    return Package(path, name)
+    return Package(path, name, author, version, args.email)
 
 
 def _setup_logging(verbose):
@@ -186,10 +191,23 @@ def _publish(path, test):
 
 
 def create_package():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=(
+            "Creates boilerplate for Python projects. Includes setup.py, "
+            "git repository, .gitinore, license, README, makefile."
+        ),
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument("name", nargs="?", help="Name of package to create")
-    parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--author", help="Name of author", default="Your Name")
+    parser.add_argument(
+        "--email", help="Email of author", default="youremail@domain.com"
+    )
+    parser.add_argument(
+        "--packageversion", help="Initial version of your package", default="0.0.0.1"
+    )
     parser.add_argument("--version", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
     if args.version:
@@ -268,7 +286,7 @@ def create_venv():
         printblue("A new virtual environment has been created!")
         print()
         print(
-            f"Run cd {str(path)!r} then type `source activate` "
+            f"Run cd {str(path)!r} then type `source venv/bin/activate` "
             "to activate it. When you are finished type `deactivate` to exit the environment."
         )
     except CppError as e:

@@ -51,7 +51,18 @@ deactivate
 To learn more about virtual environments, see [Creating Virtual Environments](https://packaging.python.org/tutorials/installing-packages/#creating-virtual-environments).
 
 ## Installation
-*[pipx](https://github.com/cs01/pipx) is a new package that allows you to run or install Python binaries from packages*
+*[pipx](https://github.com/pipxproject/pipx) allows you to run or install Python binaries from packages*
+```
+python3 -m pip install --user pipx
+pipx ensurepath
+```
+
+You can run the latest version directly with
+```
+pipx run create-python-package
+```
+
+or install with
 
 ```
 pipx install create-python-package
@@ -69,8 +80,8 @@ done! ✨ 🌟 ✨
 
 If you do not wish to use pipx, you can install as follows.
 ```
-python3 -m venv cpp  # create a virtual environment
-source cpp/bin/activate  # activate the virtual environment
+python3 -m venv venv  # create a virtual environment
+source venv/bin/activate  # activate the virtual environment
 pip install -U pip  # upgrade pip
 pip install create-python-package
 ```

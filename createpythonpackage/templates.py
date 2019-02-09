@@ -1,4 +1,4 @@
-readme = """# %s
+readme = """# {name}
 
 """
 
@@ -13,7 +13,9 @@ setup = """#!/usr/bin/env python
 # https://packaging.python.org/tutorials/packaging-projects/
 # https://setuptools.readthedocs.io/en/latest/
 
+import ast
 import io
+import re
 import os
 import sys
 from setuptools import find_packages, setup, Command
@@ -25,11 +27,21 @@ CURDIR = os.path.abspath(os.path.dirname(__file__))
 with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
     README = f.read()
 
+
+def get_version() -> str:
+    main_file = os.path.join(CURDIR, "{name}", "main.py")
+    _version_re = re.compile(r"__version__\s+=\s+(?P<version>.*)")
+    with open(main_file, "r", encoding="utf8") as f:
+        match = _version_re.search(f.read())
+        version = match.group("version") if match is not None else '"unknown"'
+    return str(ast.literal_eval(version))
+
+
 setup(
-    name="%s",
-    version="0.0.0.1",
-    author="Your Name",
-    author_email="youremail@domain.com",
+    name="{name}",
+    version=get_version(),
+    author="{author}",
+    author_email="{email}",
     description="description",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -38,9 +50,9 @@ setup(
     include_package_data=True,
     keywords=[],
     scripts=[],
-    entry_points={
+    entry_points={{
         # "console_scripts": ["sample=sample:main",]
-    },
+    }},
     zip_safe=False,
     install_requires=DEPENDENCIES,
     python_requires=">=3.6",
@@ -61,8 +73,11 @@ setup(
 main = """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+__version__ = "{version}"
+
+
 def main():
-    pass
+    print("TODO")
 
 
 if __name__ == "__main__":
@@ -90,7 +105,7 @@ var/
 
 licence = """MIT License
 
-Copyright (c) Your Name
+Copyright (c) {author}
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -109,4 +124,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+makefile = """.PHONY: clean build publish
+
+build: clean
+	python3 -m pip install --upgrade --quiet setuptools wheel twine
+	python3 setup.py --quiet sdist bdist_wheel
+
+publish: build
+	python3 -m twine upload dist/*
+
+clean:
+	rm -r build dist *.egg-info || true
 """
