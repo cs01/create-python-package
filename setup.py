@@ -14,7 +14,7 @@ from typing import List  # noqa E402
 import ast  # noqa E402
 import re  # noqa E402
 
-DEPENDENCIES = []
+DEPENDENCIES = ["jinja2<2.20, >2.0"]
 CURDIR = Path(__file__).parent
 EXCLUDE_FROM_PACKAGES = ["contrib", "docs", "tests*"]
 
@@ -47,16 +47,14 @@ setup(
     scripts=[],
     entry_points={
         "console_scripts": [
-            "create-python-package = createpythonpackage.main:create_package",
-            "build-python-package = createpythonpackage.main:build_package",
-            "publish-python-package = createpythonpackage.main:publish",
-            "create-venv = createpythonpackage.main:create_venv",
+            "create-python-package = createpythonpackage.main:create_package"
         ]
     },
-    extras_require={},
+    install_requires=DEPENDENCIES,
+    extras_require={"dev": ["black", "flake8", "mypy"]},
+    test_suite="tests.test_createpythonpackage",
     zip_safe=False,
     python_requires=">=3.6",
-    install_requires=[],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
