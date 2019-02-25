@@ -193,7 +193,6 @@ class Package:
                 f"  {blue('source ven/bin/activate')}\n\n"
                 "To deactivate the virtual environment, type `deactivate`.\n"
             )
-            create_venv(self.path, self.name, force=self.force)
         elif self.env.lower() == PackageEnv.pipenv.name.lower():
             print("  pipenv install -e .  # install this package in editable mode")
             print()
