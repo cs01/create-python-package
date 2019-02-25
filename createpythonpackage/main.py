@@ -40,7 +40,7 @@ def _create_package(args):
     default_entrypoint = "main.py"
     default_repo_url = ""  # TODO get repo origin if in a git repo
     default_author = "Your Name"  # TODO get repo author if in a git repo
-    default_email = "email@doman.com"  # TODO get repo email if in a git repo
+    default_email = "email@domain.com"  # TODO get repo email if in a git repo
     default_env = envs[0]
     default_license = licenses[0]
 
