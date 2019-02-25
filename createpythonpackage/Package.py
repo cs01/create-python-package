@@ -195,7 +195,7 @@ class Package:
             )
             create_venv(self.path, self.name, force=self.force)
         elif self.env.lower() == PackageEnv.pipenv.name.lower():
-            print("  pipenv -e .")
+            print("  pipenv install -e .  # install this package in editable mode")
             print()
         print(
             "Questions? Create an issue at https://github.com/cs01/create-python-package"
