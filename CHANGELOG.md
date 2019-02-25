@@ -1,4 +1,7 @@
 # `create-python-package` Changelog
+0.2.0.1
+* update text printed when using pipenv
+
 0.2.0.0
 * Remove all entrypoints but `create-python-package`
 * Add interactive choices to command line
