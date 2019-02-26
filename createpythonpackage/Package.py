@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import NamedTuple
 import datetime
 import enum
-import logging
 
 
 class PackageEnv(enum.Enum):
