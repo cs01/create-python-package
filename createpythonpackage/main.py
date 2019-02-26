@@ -7,7 +7,7 @@ from .Package import Package, PackageConfig, PackageEnv, PackageLicense
 from .util import blue, printblue, TEST_PYPI_URL, CppError, mkdir, run, grey
 from typing import Optional, List
 
-__version__ = "0.2.0.2"
+__version__ = "0.2.0.3"
 
 
 def print_version():

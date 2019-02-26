@@ -83,12 +83,9 @@ class Package:
         if self.env.lower() == PackageEnv.venv.name.lower():
             create_venv(self.path, self.name, force=self.force)
         elif self.env.lower() == PackageEnv.pipenv.name.lower():
-            Path(self.path / "Pipfile").touch()
+            Path(self.path / "Pipfile").touch()  # TODO run pipenv install
         elif self.env.lower() == PackageEnv.poetry.name.lower():
-            logging.warning(
-                "poetry has its own package initialization script. "
-                "Use it instead of create-python-package."
-            )
+            pass  # TODO run poetry init
         else:
             print(self.env.lower(), "vs", PackageEnv.venv.name.lower())
             print(f"unknown env option {self.env}")

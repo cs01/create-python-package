@@ -1,4 +1,7 @@
 # `create-python-package` Changelog
+0.2.0.3
+* [bugfix] Do not create venv twice (@florimondmanca)
+
 0.2.0.2
 * update text printed when using pipenv
 

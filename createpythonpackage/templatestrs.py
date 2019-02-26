@@ -4,7 +4,6 @@ readme = """# {name}
 
 gitignore = """*.pyc
 venv/
-activate-venv
 bin/
 build/
 develop-eggs/
@@ -18,5 +17,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-__pypackages__
+*.eggs
+.mypy_cache/
+.vscode
 """

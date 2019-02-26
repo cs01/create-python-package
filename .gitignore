@@ -1,6 +1,5 @@
 *.pyc
 venv/
-activate-venv
 bin/
 build/
 develop-eggs/
@@ -14,4 +13,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.eggs
 .mypy_cache/
+.vscode
