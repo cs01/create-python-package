@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from .util import run, printblue, blue, mkdir
+from .util import run, printblue, blue, mkdir, CppError
 import subprocess
-from . import templatestrs
 from .createvenv import create_venv
 from jinja2 import Template
 import pkgutil
@@ -10,12 +9,14 @@ from pathlib import Path
 from typing import NamedTuple
 import datetime
 import enum
+from distutils.spawn import find_executable
 
 
 class PackageEnv(enum.Enum):
     venv = enum.auto()
     pipenv = enum.auto()
     poetry = enum.auto()
+    none = enum.auto()
 
 
 class PackageLicense(enum.Enum):
@@ -82,12 +83,18 @@ class Package:
         if self.env.lower() == PackageEnv.venv.name.lower():
             create_venv(self.path, self.name, force=self.force)
         elif self.env.lower() == PackageEnv.pipenv.name.lower():
-            Path(self.path / "Pipfile").touch()  # TODO run pipenv install
+            if find_executable("pipenv"):
+                run(["pipenv", "install"], cwd=str(self.path))
+            else:
+                print(
+                    "pipenv was not found. Install pipenv, then run 'pipenv install'."
+                )
         elif self.env.lower() == PackageEnv.poetry.name.lower():
             pass  # TODO run poetry init
+        elif self.env.lower() == PackageEnv.none.name.lower():
+            pass  # do nothing, user doesn't want environment managed
         else:
-            print(self.env.lower(), "vs", PackageEnv.venv.name.lower())
-            print(f"unknown env option {self.env}")
+            raise CppError(f"unknown env option {self.env}")
 
     def git_init(self):
         run(["git", "init", self.path], stdout=subprocess.DEVNULL)
@@ -100,7 +107,9 @@ class Package:
 
         with open(self.path / "README.md", "w") as f:
             f.write(
-                templatestrs.readme.format(name=self.name, description=self.description)
+                _get_template("README.md").render(
+                    name=self.name, description=self.description
+                )
             )
 
         with open(self.path / "setup.py", "w") as f:
@@ -121,17 +130,20 @@ class Package:
             f.write(_get_template("entrypoint.py").render(version=self.version))
 
         with open(self.path / ".gitignore", "w") as f:
-            f.write(templatestrs.gitignore)
+            f.write(_get_template("gitignore").render())
 
         self.add_license()
 
         with open(self.path / "makefile", "w") as f:
             f.write(_get_template("makefile").render())
 
+        with open(self.path / "MANIFEST.in", "w") as f:
+            f.write(_get_template("MANIFEST.in").render(name=self.name))
+
         mkdir(self.path / "tests")
         with open(self.path / "tests" / "test_project.py", "w") as f:
             f.write(
-                _get_template("test_project.py").render(
+                _get_template("test_project.py.jinja").render(
                     license=self.userlicense,
                     repo_url=self.repo_url,
                     name=self.name,
@@ -189,9 +201,6 @@ class Package:
                 f"  {blue('source ven/bin/activate')}\n\n"
                 "To deactivate the virtual environment, type `deactivate`.\n"
             )
-        elif self.env.lower() == PackageEnv.pipenv.name.lower():
-            print("  pipenv install -e .  # install this package in editable mode")
-            print()
         print(
             "Questions? Create an issue at https://github.com/cs01/create-python-package"
         )

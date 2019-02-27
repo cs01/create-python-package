@@ -1,8 +1,4 @@
-readme = """# {name}
-{description}
-"""
-
-gitignore = """*.pyc
+*.pyc
 venv/
 bin/
 build/
@@ -20,4 +16,3 @@ var/
 *.eggs
 .mypy_cache/
 .vscode
-"""

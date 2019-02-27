@@ -14,9 +14,7 @@ from typing import List  # noqa E402
 import ast  # noqa E402
 import re  # noqa E402
 
-DEPENDENCIES = ["jinja2<2.20, >2.0"]
 CURDIR = Path(__file__).parent
-EXCLUDE_FROM_PACKAGES = ["contrib", "docs", "tests*"]
 
 with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
     README = f.read()
@@ -41,7 +39,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/cs01/create-python-package",
     license="License :: OSI Approved :: MIT License",
-    packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
+    packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     include_package_data=True,
     keywords=["package", "setup"],
     scripts=[],
@@ -50,8 +48,8 @@ setup(
             "create-python-package = createpythonpackage.main:create_package"
         ]
     },
-    install_requires=DEPENDENCIES,
-    extras_require={"dev": ["black", "flake8", "mypy"]},
+    install_requires=["jinja2<2.20, >2.0"],
+    extras_require={"dev": ["black", "flake8", "mypy", "pipenv"]},
     test_suite="tests.test_createpythonpackage",
     zip_safe=False,
     python_requires=">=3.6",

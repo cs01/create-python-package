@@ -4,7 +4,7 @@
 <a href="https://travis-ci.org/cs01/create-python-package"><img src="https://travis-ci.org/cs01/create-python-package.svg?branch=master" /></a>
 
 <a href="https://pypi.python.org/pypi/pipx/">
-<img src="https://img.shields.io/badge/pypi-0.2.0.3-blue.svg" /></a>
+<img src="https://img.shields.io/badge/pypi-0.2.1.0-blue.svg" /></a>
 <a href="https://github.com/ambv/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
@@ -61,6 +61,30 @@ or install with
 
 ```
 pipx install create-python-package
+```
+
+## Generated Directory Structure
+```
+>> pipx run create-python-package examplepackage --yes
+>> tree -L 2 examplepackage/
+examplepackage/
+├── examplepackage
+│   ├── __init__.py
+│   └── main.py
+├── LICENSE
+├── makefile
+├── MANIFEST.in
+├── README.md
+├── setup.py
+├── tests
+│   └── test_project.py
+└── venv
+    ├── bin
+    ├── include
+    ├── lib
+    ├── lib64 -> lib
+    ├── pyvenv.cfg
+    └── share
 ```
 
 ## Credits

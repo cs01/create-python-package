@@ -7,7 +7,7 @@ from .Package import Package, PackageConfig, PackageEnv, PackageLicense
 from .util import blue, printblue, TEST_PYPI_URL, CppError, mkdir, run, grey
 from typing import Optional, List
 
-__version__ = "0.2.0.3"
+__version__ = "0.2.1.0"
 
 
 def print_version():
@@ -30,7 +30,9 @@ def question(s, default, options: Optional[List[str]] = None):
 def _create_package(args):
     path = Path(args.name).resolve()
     if path.exists() and len(list(path.iterdir())) and not args.force:
-        raise CppError(f"{str(path)} already exists and is not empty")
+        raise CppError(
+            f"{str(path)} already exists and is not empty. Delete it then try again."
+        )
 
     envs = [o.name for o in PackageEnv]
     licenses = [o.name for o in PackageLicense]

@@ -56,7 +56,9 @@ class UnitTests(unittest.TestCase):
         default_env = envs[0]
         default_license = licenses[0]
 
+        print()
         for env in envs:
+            print("testing env", env)
             self.run_package(
                 {
                     "path": path,
@@ -72,7 +74,9 @@ class UnitTests(unittest.TestCase):
                 }
             )
 
+        print()
         for lic in licenses:
+            print("testing license", lic)
             self.run_package(
                 {
                     "path": path,

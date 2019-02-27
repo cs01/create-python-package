@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# For a fully annotated version of this file and what it does, see
+# https://github.com/pypa/sampleproject/blob/master/setup.py
+
 # To upload this file to PyPI you must build it then upload it:
 # python setup.py sdist bdist_wheel  # build in 'dist' folder
 # python-m twine upload dist/*  # 'twine' must be installed: 'pip install twine'
-
-# setuptools is a fully-featured, actively-maintained, and stable
-# library designed to facilitate packaging Python projects.
-# setup.py is the build script for setuptools.
-# It tells setuptools about your package (such as the name and version)
-# as well as which code files to include.
-# https://packaging.python.org/tutorials/packaging-projects/
-# https://setuptools.readthedocs.io/en/latest/
 
 
 import ast

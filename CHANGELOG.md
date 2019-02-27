@@ -1,4 +1,10 @@
 # `create-python-package` Changelog
+0.2.1.0
+* Run `pipenv install` if pipenv option was chosen (#2)
+* Add 'none' option for environment management
+* Update boilerplate for generated test
+* Add `MANIFEST.in`
+
 0.2.0.3
 * [bugfix] Do not create venv twice (@florimondmanca)
 
