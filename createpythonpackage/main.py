@@ -7,6 +7,11 @@ from .Package import Package, PackageConfig, PackageEnv, PackageLicense
 from .util import blue, printblue, TEST_PYPI_URL, CppError, mkdir, run, grey
 from typing import Optional, List
 
+try:
+    from bullet import Bullet
+except ImportError:
+    Bullet = None
+
 __version__ = "0.2.1.0"
 
 
@@ -14,17 +19,36 @@ def print_version():
     print(__version__)
 
 
-def question(s, default, options: Optional[List[str]] = None):
+QUESTION_MARK = grey("[?]")
+
+
+def question(s, default, options: Optional[List[str]] = None) -> str:
     while True:
-        question = grey("question")
         if options:
-            options_str = ", ".join(options)
-            response = input(f"{question} {s} ({default}) (options: {options_str}): ")
+            response = list_question(s, default, options)
         else:
-            response = input(f"{question} {s} ({default}): ")
+            response = input(f"{QUESTION_MARK} {s} ({default}): ")
         if not response:
             return default
         return response
+
+
+def list_question(s, default, options: List[str]) -> str:
+    if Bullet is not None:
+        cli = Bullet(
+            prompt=f"{QUESTION_MARK} {s} ({default}):", choices=options, margin=1
+        )
+        return cli.launch()
+
+    # Fallback to a home-made list prompt.
+
+    num_to_option = {str(i + 1): option for i, option in enumerate(options)}
+    options_str = "\n".join([f"{i}) {option}" for i, option in num_to_option.items()])
+
+    response = input(f"{QUESTION_MARK} {s} ({default}):\n{options_str}\n> ")
+    response = num_to_option.get(response, response)
+
+    return response
 
 
 def _create_package(args):

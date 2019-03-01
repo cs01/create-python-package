@@ -48,7 +48,10 @@ setup(
             "create-python-package = createpythonpackage.main:create_package"
         ]
     },
-    install_requires=["jinja2<2.20, >2.0"],
+    install_requires=[
+        "jinja2<2.20, >2.0",
+        "bullet<1.4.0, >1.0;platform_system!='Windows'",
+    ],
     extras_require={"dev": ["black", "flake8", "mypy", "pipenv"]},
     test_suite="tests.test_createpythonpackage",
     zip_safe=False,
