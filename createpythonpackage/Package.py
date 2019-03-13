@@ -24,6 +24,7 @@ class PackageLicense(enum.Enum):
     gplv3 = enum.auto()
     apache2 = enum.auto()
     bsd3 = enum.auto()
+    none = enum.auto()
 
 
 def _get_template(name: str) -> Template:
@@ -84,7 +85,7 @@ class Package:
             create_venv(self.path, self.name, force=self.force)
         elif self.env.lower() == PackageEnv.pipenv.name.lower():
             if find_executable("pipenv"):
-                run(["pipenv", "install"], cwd=str(self.path))
+                run(["pipenv", "install", "-e", "."], cwd=str(self.path))
             else:
                 print(
                     "pipenv was not found. Install pipenv, then run 'pipenv install'."
