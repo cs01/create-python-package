@@ -50,7 +50,7 @@ setup(
     },
     install_requires=[
         "jinja2<2.20, >2.0",
-        "bullet<1.4.0, >1.0;platform_system!='Windows'",
+        "bullet<3.0.0, >=2.0;platform_system!='Windows'",
     ],
     extras_require={"dev": ["black", "flake8", "mypy", "pipenv"]},
     test_suite="tests.test_createpythonpackage",
