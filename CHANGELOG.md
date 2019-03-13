@@ -1,4 +1,10 @@
 # `create-python-package` Changelog
+0.2.2.0
+* Run `pipenv install -e .` instead of `pipenv install` when pipenv is chosen
+* Add `python -m twine check` to generated makefile. Now `make publish` will also run `twine check`
+* Allow ctrl+c (abort) to work when selecting from list choices by upgrading bullet library
+* Add "none" license choice
+
 0.2.1.0
 * Run `pipenv install` if pipenv option was chosen (#2)
 * Add 'none' option for environment management
