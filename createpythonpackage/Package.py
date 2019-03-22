@@ -13,10 +13,10 @@ from distutils.spawn import find_executable
 
 
 class PackageEnv(enum.Enum):
+    none = enum.auto()
     venv = enum.auto()
     pipenv = enum.auto()
     poetry = enum.auto()
-    none = enum.auto()
 
 
 class PackageLicense(enum.Enum):

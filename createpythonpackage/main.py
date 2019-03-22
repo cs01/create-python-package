@@ -12,7 +12,7 @@ try:
 except ImportError:
     Bullet = None
 
-__version__ = "0.2.2.0"
+__version__ = "0.3.0.0"
 
 
 def print_version():

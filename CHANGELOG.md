@@ -1,4 +1,8 @@
 # `create-python-package` Changelog
+
+0.3.0.0
+* Change default environment manager to none
+
 0.2.2.0
 * Run `pipenv install -e .` instead of `pipenv install` when pipenv is chosen
 * Add `python -m twine check` to generated makefile. Now `make publish` will also run `twine check`
