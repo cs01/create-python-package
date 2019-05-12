@@ -3,7 +3,7 @@
 import argparse
 import logging
 from pathlib import Path
-from .Package import Package, PackageConfig, PackageEnv, PackageLicense
+from .Package import Package, PackageConfig, PackageEnv, PackageLicense, TestFramework
 from .util import blue, printblue, TEST_PYPI_URL, CppError, mkdir, run, grey
 from typing import Optional, List
 
@@ -59,6 +59,7 @@ def _create_package(args):
         )
 
     envs = [o.name for o in PackageEnv]
+    test_frameworks = [o.name for o in TestFramework]
     licenses = [o.name for o in PackageLicense]
 
     default_version = "0.0.0.1"
@@ -68,6 +69,7 @@ def _create_package(args):
     default_author = "Your Name"  # TODO get repo author if in a git repo
     default_email = "email@domain.com"  # TODO get repo email if in a git repo
     default_env = envs[0]
+    default_test_framework = envs[0]
     default_license = licenses[0]
 
     if args.yes:
@@ -81,6 +83,7 @@ def _create_package(args):
                 "author": default_author,
                 "email": default_email,
                 "env": default_env,
+                "test_framework": default_test_framework,
                 "userlicense": default_license,
                 "force": args.force,
             }
@@ -96,6 +99,9 @@ def _create_package(args):
                 "author": question("author", default_author),
                 "email": question("email", default_email),
                 "env": question("environment management", default_env, options=envs),
+                "test_framework": question(
+                    "test framework", default_test_framework, options=test_frameworks
+                ),
                 "userlicense": question("license", default_license, options=licenses),
                 "force": args.force,
             }

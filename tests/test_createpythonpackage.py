@@ -11,6 +11,7 @@ from createpythonpackage.Package import (
     Package,
     PackageEnv,
     PackageLicense,
+    TestFramework,
 )
 
 
@@ -45,6 +46,7 @@ class UnitTests(unittest.TestCase):
     def test_configs(self):
         path = None
         envs = [o.name for o in PackageEnv]
+        test_frameworks = [o.name for o in TestFramework]
         licenses = [o.name for o in PackageLicense]
 
         default_version = "0.0.0.1"
@@ -54,43 +56,37 @@ class UnitTests(unittest.TestCase):
         default_author = "Your Name"  # TODO get repo author if in a git repo
         default_email = "email@doman.com"  # TODO get repo email if in a git repo
         default_env = envs[0]
+        default_test_framework = test_frameworks[0]
         default_license = licenses[0]
+
+        default_config = {
+            "path": path,
+            "version": default_version,
+            "description": default_description,
+            "entrypoint": default_entrypoint,
+            "repo_url": default_repo_url,
+            "author": default_author,
+            "email": default_email,
+            "env": default_env,
+            "test_framework": default_test_framework,
+            "userlicense": default_license,
+            "force": True,
+        }
 
         print()
         for env in envs:
             print("testing env", env)
-            self.run_package(
-                {
-                    "path": path,
-                    "version": default_version,
-                    "description": default_description,
-                    "entrypoint": default_entrypoint,
-                    "repo_url": default_repo_url,
-                    "author": default_author,
-                    "email": default_email,
-                    "env": env,
-                    "userlicense": default_license,
-                    "force": True,
-                }
-            )
+            self.run_package({**default_config, "env": env})
+
+        print()
+        for test_framework in test_frameworks:
+            print("testing test framework", test_framework)
+            self.run_package({**default_config, "test_framework": test_framework})
 
         print()
         for lic in licenses:
             print("testing license", lic)
-            self.run_package(
-                {
-                    "path": path,
-                    "version": default_version,
-                    "description": default_description,
-                    "entrypoint": default_entrypoint,
-                    "repo_url": default_repo_url,
-                    "author": default_author,
-                    "email": default_email,
-                    "env": default_env,
-                    "userlicense": lic,
-                    "force": True,
-                }
-            )
+            self.run_package({**default_config, "userlicense": lic})
 
 
 def main():

@@ -27,6 +27,12 @@ class PackageLicense(enum.Enum):
     none = enum.auto()
 
 
+class TestFramework(enum.Enum):
+    none = enum.auto()
+    unittest = enum.auto()
+    pytest = enum.auto()
+
+
 def _get_template(name: str) -> Template:
     data = pkgutil.get_data("createpythonpackage", f"templates/{name}")
     if not data:
@@ -44,6 +50,7 @@ class PackageConfig(NamedTuple):
     author: str
     email: str
     env: str
+    test_framework: str
     userlicense: str
     force: bool
 
@@ -60,6 +67,7 @@ class Package:
         self.author = config.author
         self.email = config.email
         self.env = config.env
+        self.test_framework = config.test_framework
         self.userlicense = config.userlicense
         self.force = config.force
 
@@ -106,6 +114,19 @@ class Package:
         (self.path / self.name).mkdir(exist_ok=True)
         (self.path / self.name / "__init__.py").touch()
 
+        entry_filename = self.entrypoint.replace(".py", "")
+        context = dict(
+            license=self.userlicense,
+            repo_url=self.repo_url,
+            name=self.name,
+            author=self.author,
+            email=self.email,
+            entry_point=f"{self.name}={self.name}.{entry_filename}:main",
+            license_classifier=self.license_classifier,
+        )
+
+        self.add_test_files(context)
+
         with open(self.path / "README.md", "w") as f:
             f.write(
                 _get_template("README.md").render(
@@ -114,18 +135,7 @@ class Package:
             )
 
         with open(self.path / "setup.py", "w") as f:
-            entry_filename = self.entrypoint.replace(".py", "")
-            f.write(
-                _get_template("setup.py").render(
-                    license=self.userlicense,
-                    repo_url=self.repo_url,
-                    name=self.name,
-                    author=self.author,
-                    email=self.email,
-                    entry_point=f"{self.name}={self.name}.{entry_filename}:main",
-                    license_classifier=self.license_classifier,
-                )
-            )
+            f.write(_get_template("setup.py").render(context))
 
         with open(self.path / self.name / self.entrypoint, "w") as f:
             f.write(_get_template("entrypoint.py").render(version=self.version))
@@ -140,19 +150,6 @@ class Package:
 
         with open(self.path / "MANIFEST.in", "w") as f:
             f.write(_get_template("MANIFEST.in").render(name=self.name))
-
-        mkdir(self.path / "tests")
-        with open(self.path / "tests" / "test_project.py", "w") as f:
-            f.write(
-                _get_template("test_project.py.jinja").render(
-                    license=self.userlicense,
-                    repo_url=self.repo_url,
-                    name=self.name,
-                    author=self.author,
-                    email=self.email,
-                    entry_point=f"{self.name}={self.name}.{entry_filename}:main",
-                )
-            )
 
     def add_license(self):
         year = datetime.datetime.now().year
@@ -175,6 +172,23 @@ class Package:
                 )
             else:
                 f.write(f"{self.userlicense} License\n\nCopyright (c) {self.author}")
+
+    def add_test_files(self, context: dict):
+        if self.test_framework.lower() == TestFramework.none.name.lower():
+            return
+
+        mkdir(self.path / "tests")
+        (self.path / "tests" / "__init__.py").touch()
+
+        if self.test_framework.lower() == TestFramework.unittest.name.lower():
+            template = _get_template("test_project_unittest.py.jinja")
+        elif self.test_framework.lower() == TestFramework.pytest.name.lower():
+            template = _get_template("test_project_pytest.py.jinja")
+        else:
+            raise CppError(f"unknown test framework option {self.test_framework}")
+
+        with open(self.path / "tests" / "test_project.py", "w") as f:
+            f.write(template.render(context))
 
     def print_success(self):
         print(f"Success! Created {self.name} at {str(self.path)}")

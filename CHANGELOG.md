@@ -1,5 +1,8 @@
 # `create-python-package` Changelog
 
+Unreleased
+* Add test framework option, with support for `unittest` and `pytest` (@florimondmanca)
+
 0.3.0.0
 * Change default environment manager to none
 
