@@ -194,12 +194,12 @@ class Package:
         print(f"Success! Created {self.name} at {str(self.path)}")
         print("Inside that directory, you can run several commands")
         print()
-        print("  python setup.py tests  # runs unit tests")
+        print("  python setup.py test  # runs unit tests")
         print
         print("  make publish  # builds and publishes to PyPI")
         print()
         if self.env.lower() == PackageEnv.venv.name.lower():
-            printblue("  source ven/bin/activate")
+            printblue("  source venv/bin/activate")
             print("     Activates this package's isolated Python environment")
             print()
             printblue("  pip install PACKAGE")

@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 import sys
+from typing import Callable, NamedTuple
 
 TEST_PYPI_URL = "https://test.pypi.org/simple/"
 ISATTY = sys.stdout.isatty()
@@ -43,3 +44,8 @@ def mkdir(path):
         return
     logging.info(f"creating directory {path}")
     path.mkdir(parents=True, exist_ok=True)
+
+
+class Validator(NamedTuple):
+    is_valid: Callable[[str], bool]
+    error_message: str

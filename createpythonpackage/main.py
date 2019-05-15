@@ -2,9 +2,10 @@
 
 import argparse
 import logging
+import sys
 from pathlib import Path
 from .Package import Package, PackageConfig, PackageEnv, PackageLicense, TestFramework
-from .util import blue, printblue, TEST_PYPI_URL, CppError, mkdir, run, grey
+from .util import blue, printblue, TEST_PYPI_URL, Validator, CppError, mkdir, run, grey
 from typing import Optional, List
 
 try:
@@ -22,15 +23,28 @@ def print_version():
 QUESTION_MARK = grey("[?]")
 
 
-def question(s, default, options: Optional[List[str]] = None) -> str:
+def question(
+    s,
+    default,
+    *,
+    options: Optional[List[str]] = None,
+    validator: Optional[Validator] = None,
+) -> str:
     while True:
         if options:
             response = list_question(s, default, options)
         else:
             response = input(f"{QUESTION_MARK} {s} ({default}): ")
         if not response:
-            return default
-        return response
+            response = default
+
+        if validator:
+            if validator.is_valid(response):
+                return response
+            else:
+                print(validator.error_message, file=sys.stderr)
+        else:
+            return response
 
 
 def list_question(s, default, options: List[str]) -> str:

@@ -2,6 +2,10 @@
 
 Unreleased
 * Add test framework option, with support for `unittest` and `pytest` (@florimondmanca)
+* Fix typo in output
+* Handle pip upgrade failure correctly
+* Add contributing instructions
+* [dev] Add optional validator to questions (@cs01)
 
 0.3.0.0
 * Change default environment manager to none

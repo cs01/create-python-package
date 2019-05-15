@@ -87,5 +87,16 @@ examplepackage/
     └── share
 ```
 
+## Contributing
+Clone this repository, create a virtual environment, then install dependencies with:
+```
+pip install -e ".[dev]"
+```
+
+Then run tests:
+```
+python setup.py test
+```
+
 ## Credits
 Inspired by [create-react-app](https://github.com/facebook/create-react-app)

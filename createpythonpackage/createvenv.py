@@ -14,7 +14,9 @@ def create_venv(path: Path, name: str, *, force: bool, python: str = sys.executa
     if run([python, "-m", "venv", venv, "--prompt", name]):
         raise CppError("Could not create virtual environment")
     print(f"Upgrading {blue('pip')} in the virtual environment.")
-    if run([path / "venv/bin/pip", "install", "--upgrade", "--quiet", "pip"]):
+    if run(
+        [path / "venv/bin/pip", "install", "--upgrade", "--quiet", "pip"], check=False
+    ):
         logging.warning("Could not upgrade pip to latest verions")
     print()
     return venv
