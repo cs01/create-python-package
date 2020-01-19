@@ -1,12 +1,7 @@
 # `create-python-package` Changelog
 
-Unreleased
-* Add test framework option, with support for `unittest` and `pytest` (@florimondmanca)
-* Update generated README (@cs01)
-* Fix typo in output  (@cs01)
-* Handle pip upgrade failure correctly  (@cs01)
-* Add contributing instructions (@cs01)
-* Add validator to questions for real-time validation (@cs01)
+0.4.0.0
+* Use `cookicutter` under the hood and call `cookicutter https://github.com/audreyr/cookiecutter-pypackage`
 
 0.3.0.0
 * Change default environment manager to none

@@ -1,4 +1,4 @@
-from .main import create_package
+from .main import main
 
 if __name__ == "__main__":
-    create_package()
+    main()

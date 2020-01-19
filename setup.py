@@ -1,18 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import io
 import os
-import sys
-
-if sys.version_info < (3, 6, 0):
-    print("Python 3.6+ is required")
-    exit(1)
-from setuptools import find_packages, setup  # noqa E402
-from pathlib import Path  # noqa E402
-from typing import List  # noqa E402
-import ast  # noqa E402
-import re  # noqa E402
+from setuptools import find_packages, setup  # type: ignore
+from pathlib import Path
+import ast
+import re
 
 CURDIR = Path(__file__).parent
 
@@ -44,24 +36,16 @@ setup(
     keywords=["package", "setup"],
     scripts=[],
     entry_points={
-        "console_scripts": [
-            "create-python-package = createpythonpackage.main:create_package"
-        ]
+        "console_scripts": ["create-python-package = createpythonpackage.main:main"]
     },
-    install_requires=[
-        "jinja2<2.20, >2.0",
-        "bullet<3.0.0, >=2.0;platform_system!='Windows'",
-    ],
-    extras_require={"dev": ["black", "flake8", "mypy", "pipenv"]},
-    test_suite="tests.test_createpythonpackage",
-    zip_safe=False,
+    install_requires=["cookiecutter"],
     python_requires=">=3.6",
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3",
+        "Intended Audience :: Developers",
     ],
 )

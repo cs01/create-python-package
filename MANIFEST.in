@@ -1,2 +1,8 @@
 include README.md LICENSE
 recursive-include createpythonpackage *
+
+exclude .flake8
+exclude CHANGELOG.md
+exclude makefile
+exclude mypy.ini
+exclude noxfile.py
