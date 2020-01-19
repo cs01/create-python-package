@@ -1,7 +1,7 @@
 # `create-python-package` Changelog
 
 0.4.0.0
-* Use `cookicutter` under the hood and call `cookicutter https://github.com/audreyr/cookiecutter-pypackage`
+* Replace implementation with cookiecutter and one of cookiecutter's Python templates, since it is under more active development: `cookiecutter https://github.com/audreyr/cookiecutter-pypackage`
 
 0.3.0.0
 * Change default environment manager to none
