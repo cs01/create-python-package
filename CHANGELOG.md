@@ -1,5 +1,11 @@
 # `create-python-package` Changelog
 
+0.5.0.1
+* Bugfix to actually use new template
+
+0.5.0.0
+* Change default package to https://github.com/cs01/cookiecutter-pypackage
+
 0.4.0.0
 * Replace implementation with cookiecutter and one of cookiecutter's Python templates, since it is under more active development: `cookiecutter https://github.com/audreyr/cookiecutter-pypackage`
 

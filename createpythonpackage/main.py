@@ -4,7 +4,7 @@ import argparse
 from cookiecutter.main import cookiecutter  # type: ignore
 from click.exceptions import Abort
 
-__version__ = "0.5.0.0"
+__version__ = "0.5.0.1"
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     print(f"Using template {args.template}")
 
     try:
-        cookiecutter("cookiecutter-pypackage/")
+        cookiecutter(args.template)
     except Abort:
         print()
         exit(1)
