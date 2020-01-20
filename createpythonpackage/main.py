@@ -4,7 +4,7 @@ import argparse
 from cookiecutter.main import cookiecutter  # type: ignore
 from click.exceptions import Abort
 
-__version__ = "0.4.0.0"
+__version__ = "0.5.0.0"
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     )
     parser.add_argument(
         "--template",
-        default="https://github.com/audreyr/cookiecutter-pypackage",
+        default="https://github.com/cs01/cookiecutter-pypackage",
         help="Template name or url.",
     )
     parser.add_argument("--version", action="store_true")
